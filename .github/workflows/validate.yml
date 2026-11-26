@@ -1,0 +1,23 @@
+name: Validate DELL OS project
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Check project metadata
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Validate device and kernel metadata
+        shell: bash
+        run: bash scripts/validate-project.sh
