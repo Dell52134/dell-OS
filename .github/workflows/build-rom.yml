@@ -66,7 +66,6 @@ jobs:
           <manifest>
             <project name="TheWhisp/android_device_samsung_jena" path="device/samsung/jena" remote="github" revision="jellybean" />
             <project name="kodok17/android_kernel_samsung_msm7x27a" path="kernel/samsung/msm7x27a" remote="github" revision="cm-10.0" />
-            <project name="TheWhisp/proprietary_vendor_samsung" path="vendor/samsung" remote="github" revision="jellybean" />
           </manifest>
           EOF
           repo sync -c -j2 --force-sync --no-clone-bundle
@@ -76,7 +75,10 @@ jobs:
           cd "$GITHUB_WORKSPACE/android"
           test -f device/samsung/jena/BoardConfig.mk
           test -f kernel/samsung/msm7x27a/arch/arm/configs/cyanogenmod/jenad_defconfig
-          test -f vendor/samsung/jena/jena-vendor.mk
+          if [ ! -f vendor/samsung/jena/jena-vendor.mk ]; then
+            echo "::error::Missing GT-S6500D proprietary vendor files. The generic TheWhisp vendor repository does not contain vendor/samsung/jena. Extract the proprietary files from a matching stock GT-S6500D firmware/device before attempting the ROM build."
+            exit 1
+          fi
           sed -i 's|^TARGET_KERNEL_CONFIG := .*|TARGET_KERNEL_CONFIG := cyanogenmod/jenad_defconfig|' device/samsung/jena/BoardConfig.mk
           grep -n 'TARGET_KERNEL_CONFIG' device/samsung/jena/BoardConfig.mk
           grep -n '^CONFIG_MACH_JENA=y' kernel/samsung/msm7x27a/arch/arm/configs/cyanogenmod/jenad_defconfig
