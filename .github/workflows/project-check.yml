@@ -1,0 +1,27 @@
+name: Project checks
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check required project documentation
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s README.md
+          test -s docs/BUILD_STATUS.md
+          test -s device/README.md
+          test -s kernel/README.md
+          test -s packages/README.md
+          echo "Project documentation is present."
+
+      - name: Check whitespace errors
+        run: git diff --check
