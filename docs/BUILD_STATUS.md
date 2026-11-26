@@ -8,13 +8,14 @@ Target base: CyanogenMod 10 / Android 4.1.2.
 - [x] Repository and project README exist.
 - [ ] Device tree compatibility verified against the selected kernel.
 - [ ] Kernel configuration and build output verified.
-- [ ] Proprietary vendor files identified and legally/appropriately obtained.
+- [x] Matching GT-S6500D stock firmware archive received and its embedded MD5 verified.
+- [ ] Required proprietary vendor files identified and extracted from the stock system image.
 - [ ] Full Android source manifest pinned.
 - [ ] ROM build completed.
 - [ ] ZIP contents and updater-script validated.
 - [ ] Recovery installation tested on a recoverable test setup.
 
-**There is currently no built ROM and no flashable ZIP in this repository.**
+**The matching stock firmware has been inspected and its sparse system image converted for analysis. Required proprietary files have not yet been extracted. There is currently no built ROM and no flashable ZIP in this repository.**
 
 ## Build safety
 
