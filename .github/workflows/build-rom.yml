@@ -1,0 +1,115 @@
+name: Build DELL OS (CM10 / jena)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - ".github/workflows/build-rom.yml"
+      - "device/**"
+      - "kernel/**"
+      - "packages/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dell-os-rom-build
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build Android 4.1.2 for GT-S6500D
+    runs-on: ubuntu-22.04
+    timeout-minutes: 360
+    env:
+      USE_CCACHE: "0"
+    steps:
+      - name: Free runner disk space
+        run: |
+          df -h
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc
+          sudo apt-get clean
+          df -h
+
+      - name: Install legacy Android build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bc bison build-essential curl flex g++-multilib gcc-multilib git git-lfs gnupg gperf imagemagick lib32ncurses5-dev lib32readline-dev lib32z1-dev libncurses5-dev libssl-dev libxml2 libxml2-utils lzop make pngcrush rsync schedtool squashfs-tools unzip xsltproc zip zlib1g-dev
+
+      - name: Set up Java 7
+        uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: "7"
+
+      - name: Set up Python 2.7 for legacy build scripts
+        uses: actions/setup-python@v5
+        with:
+          python-version: "2.7"
+
+      - name: Install repo tool
+        run: |
+          mkdir -p "$HOME/bin"
+          curl -fsSL https://storage.googleapis.com/git-repo-downloads/repo -o "$HOME/bin/repo"
+          chmod a+x "$HOME/bin/repo"
+          echo "$HOME/bin" >> "$GITHUB_PATH"
+
+      - name: Initialize CyanogenMod 10 source
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/android"
+          cd "$GITHUB_WORKSPACE/android"
+          repo init -u https://github.com/CyanogenMod/android.git -b jellybean --depth=1
+          mkdir -p .repo/local_manifests
+          cat > .repo/local_manifests/jena.xml <<'EOF'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <manifest>
+            <project name="TheWhisp/android_device_samsung_jena" path="device/samsung/jena" remote="github" revision="jellybean" />
+            <project name="kodok17/android_kernel_samsung_msm7x27a" path="kernel/samsung/msm7x27a" remote="github" revision="cm-10.0" />
+            <project name="TheWhisp/proprietary_vendor_samsung" path="vendor/samsung" remote="github" revision="jellybean" />
+          </manifest>
+          EOF
+          repo sync -c -j2 --force-sync --no-clone-bundle
+
+      - name: Check device sources and align kernel defconfig
+        run: |
+          cd "$GITHUB_WORKSPACE/android"
+          test -f device/samsung/jena/BoardConfig.mk
+          test -f kernel/samsung/msm7x27a/arch/arm/configs/cyanogenmod/jenad_defconfig
+          test -f vendor/samsung/jena/jena-vendor.mk
+          sed -i 's|^TARGET_KERNEL_CONFIG := .*|TARGET_KERNEL_CONFIG := cyanogenmod/jenad_defconfig|' device/samsung/jena/BoardConfig.mk
+          grep -n 'TARGET_KERNEL_CONFIG' device/samsung/jena/BoardConfig.mk
+          grep -n '^CONFIG_MACH_JENA=y' kernel/samsung/msm7x27a/arch/arm/configs/cyanogenmod/jenad_defconfig
+
+      - name: Build CM10 ROM package
+        run: |
+          cd "$GITHUB_WORKSPACE/android"
+          source build/envsetup.sh
+          lunch cm_jena-userdebug
+          make bacon -j2
+
+      - name: Verify generated ROM ZIP
+        if: success()
+        run: |
+          cd "$GITHUB_WORKSPACE/android"
+          find out/target/product/jena -maxdepth 1 -type f -name '*.zip' -size +1M -print -quit | grep .
+
+      - name: Upload ROM ZIP
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dell-os-jena-unsigned-test-build
+          path: android/out/target/product/jena/*.zip
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Upload build logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dell-os-build-diagnostics
+          path: |
+            android/out/build*.log
+            android/.repo/manifests/default.xml
+          if-no-files-found: ignore
+          retention-days: 7
