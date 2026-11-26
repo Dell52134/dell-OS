@@ -24,3 +24,15 @@ All entries record actions actually performed. A checked item does not imply a s
 2. Extract and review the exact proprietary-file list from matching GT-S6500D stock firmware.
 3. Add only the required, appropriately sourced vendor files to the build environment.
 4. Run the build and inspect the generated ZIP and updater metadata before considering any installation.
+
+## 2026-11-27 — stock firmware received and inspected
+
+- Received user-provided archive `GT-S6500D-S6500DXXMD1-S6500DOXXMC2-20130506144417.zip` (273,929,808 bytes).
+- ZIP integrity check passed.
+- Archive contains `S6500DXXMD1_S6500DXXMD1_S6500DOXXMC2_HOME.tar.md5` and `SS_DL.dll`.
+- The Odin package contains `system.img.ext4` (Android sparse image, 421,152,768 bytes), `boot.img` (7,488,000 bytes), `recovery.img` (7,744,000 bytes), `fat.bin`, `cache.img.ext4`, and `hidden.img.ext4`.
+- Verified the Odin package's appended MD5: `e595eb60d1b46e81b1651f97014d5d7a`.
+- Converted the sparse system image to a raw ext4 image for analysis. The resulting filesystem image is 524,288,000 bytes.
+- The firmware archive does not directly contain a ready-made `vendor/samsung/jena` directory. The exact proprietary files still need to be identified and extracted from the system image.
+- No firmware was flashed to the phone. No ROM has been built.
+
