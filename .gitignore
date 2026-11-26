@@ -1,0 +1,22 @@
+# Android build outputs
+out/
+**/out/
+*.img
+*.zip
+*.apk
+*.a
+*.so
+*.o
+*.ko
+*.class
+*.jar
+
+# Host tools and temporary files
+.repo/
+.gradle/
+.idea/
+.vscode/
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
