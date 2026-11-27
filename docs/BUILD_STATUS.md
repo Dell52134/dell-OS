@@ -26,3 +26,13 @@ A GT-S6500 and GT-S6500D must not be assumed interchangeable.
 ## Build strategy
 
 The repository has metadata-validation workflows and an experimental full CM10 build workflow. The full build workflow is still being validated; it must not be treated as a successful build until it completes source sync, passes the proprietary-file checks, compiles, and uploads a verified ZIP.
+
+## Source availability update
+
+- [x] CM10 `jellybean` manifest branch reachable; `default.xml` lists 315 projects.
+- [x] Device tree branch `TheWhisp/android_device_samsung_jena:jellybean` reachable.
+- [x] Kernel branch `kodok17/android_kernel_samsung_msm7x27a:cm-10.0` reachable.
+- [ ] Full 315-project source sync completed.
+- [ ] Proprietary `vendor/samsung/jena` files extracted and integrated.
+
+The manifest and device-specific Git branches are available, but the full source tree has not been synced. Cloud Shell currently has only 10 GB free on its overlay filesystem, so it is not a suitable location for a full CM10 sync/build. No ROM ZIP exists yet.
