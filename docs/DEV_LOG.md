@@ -45,3 +45,14 @@ All entries record actions actually performed. A checked item does not imply a s
 - The firmware archive does not directly contain a ready-made `vendor/samsung/jena` directory. The exact proprietary files still need to be identified and extracted from the system image.
 - No firmware was flashed to the phone. No ROM has been built.
 
+## 2026-11-27 — CM10 manifest and source availability confirmed
+
+- In the user's Google Cloud Shell, confirmed the upstream manifest repository exposes branch `jellybean` at commit `900af14a2713f54ee92da2de5b2c769682e91cde`.
+- Cloned the manifest repository shallowly without checking out blobs; `default.xml` was readable.
+- The manifest lists 315 projects. It includes the Android build system, framework components, and Linux ARM toolchain prebuilts.
+- Confirmed the device tree branch `TheWhisp/android_device_samsung_jena:jellybean` is reachable at `dabc7f339e7293f7d574ffe42370886e73f9c219`.
+- Confirmed the kernel branch `kodok17/android_kernel_samsung_msm7x27a:cm-10.0` is reachable at `87692dad7d61147eb760b99f188df974ea30eea5`.
+- This confirms the manifest and the two device-specific source branches are available; it does **not** mean all 315 projects have been downloaded or that the ROM builds.
+- Cloud Shell reports only 10 GB free on its overlay filesystem and a 4.8 GB home volume. A full CM10 sync/build must not be attempted there with the current storage.
+- The CI workflow already uses the CM10 manifest and adds the same device/kernel repositories as a local manifest. Its latest run still needs to be checked for completion; proprietary jena vendor files remain an expected blocker.
+
