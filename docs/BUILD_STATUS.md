@@ -10,12 +10,12 @@ Target base: CyanogenMod 10 / Android 4.1.2.
 - [ ] Kernel configuration and build output verified.
 - [x] Matching GT-S6500D stock firmware archive received and its embedded MD5 verified.
 - [ ] Required proprietary vendor files identified and extracted from the stock system image.
-- [ ] Full Android source manifest pinned.
+- [ ] Full Android source manifest pinned and synced.
 - [ ] ROM build completed.
 - [ ] ZIP contents and updater-script validated.
 - [ ] Recovery installation tested on a recoverable test setup.
 
-**The matching stock firmware has been inspected and its sparse system image converted for analysis. Required proprietary files have not yet been extracted. There is currently no built ROM and no flashable ZIP in this repository.**
+**The matching stock firmware archive and embedded MD5 were verified, and its sparse system image was converted for analysis. Required proprietary files have not yet been extracted. The Java 7 CI setup failed because the available Zulu versions no longer include Java 7; the workflow now tests Temurin JDK 8. That retry is still in progress and has not yet confirmed Java setup or source sync. There is currently no built ROM and no flashable ZIP in this repository.**
 
 ## Build safety
 
@@ -25,7 +25,4 @@ A GT-S6500 and GT-S6500D must not be assumed interchangeable.
 
 ## Build strategy
 
-The first CI workflow checks repository structure and whitespace only. It does not
-download or compile the full Android source tree. A full build workflow will be added
-only after source revisions, toolchain requirements, vendor inputs, and runner storage
-have been verified.
+The repository has metadata-validation workflows and an experimental full CM10 build workflow. The full build workflow is still being validated; it must not be treated as a successful build until it completes source sync, passes the proprietary-file checks, compiles, and uploads a verified ZIP.
