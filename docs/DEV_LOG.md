@@ -12,6 +12,15 @@ All entries record actions actually performed. A checked item does not imply a s
 - Python setup, source initialization, vendor checks, and compilation were skipped because Java setup failed.
 - The separate metadata validation workflow completed successfully.
 
+## 2026-11-27 — Java toolchain retry
+
+- Updated `.github/workflows/build-rom.yml` to use Temurin JDK 8 instead of requesting Zulu JDK 7. The prior run proved that the current Zulu metadata no longer offers Java 7; merely upgrading the setup action did not solve that.
+- Commit: `51091bbbb187b9916563b31369c151d661062445`.
+- A new CI build started for this commit: [GitHub Actions run](https://github.com/Dell52134/dell-OS/actions/runs/45967587325).
+- At the time of this entry, the run was still in progress; Java 8 setup, source sync, and compilation had not yet been confirmed.
+- JDK 8 is being tested as a compatibility fallback for the legacy CM10 build. It is not yet verified as a successful toolchain.
+- The proprietary vendor files are still a separate blocker. The build must not be described as complete unless the CI job actually creates and validates a ROM ZIP.
+
 ## Current blockers
 
 1. The Java 7 setup action cannot provision the requested runtime on the current runner.
